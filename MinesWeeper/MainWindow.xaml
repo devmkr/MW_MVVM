@@ -5,8 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MinesWeeper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="525"
+         DataContext="{Binding Main, Source={StaticResource Locator}}">
     <Grid>
-        
+        <UniformGrid Columns="4">
+            <ItemsControl ItemsSource="{Binding Plates}" Margin="187,0,-200,67" HorizontalAlignment="Center" Width="142">
+                
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button IsEnabled="{Binding IsMinned}" Height="10" Width="10"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                
+            </ItemsControl>
+        </UniformGrid>
+
     </Grid>
 </Window>

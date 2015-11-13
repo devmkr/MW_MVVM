@@ -1,4 +1,7 @@
 using GalaSoft.MvvmLight;
+using MinesWeeper.Model;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MinesWeeper.ViewModel
 {
@@ -16,19 +19,22 @@ namespace MinesWeeper.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
-        /// </summary>
+        MinnerBoard model;    
+        
+        public List<Field> Plates
+        {
+            get
+            {
+                return model.Board;
+            }
+            
+        }
+        
         public MainViewModel()
         {
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
+            Debug.WriteLine("ss");
+            model = new MinnerBoard(20, 20, 20);
+            RaisePropertyChanged(nameof(Plates));
         }
     }
 }
