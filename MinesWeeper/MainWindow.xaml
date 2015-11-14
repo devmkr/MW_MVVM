@@ -1,24 +1,61 @@
-﻿<Window x:Class="MinesWeeper.MainWindow"
+﻿<Controls:MetroWindow x:Class="MinesWeeper.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MinesWeeper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525"
-         DataContext="{Binding Main, Source={StaticResource Locator}}">
+        Title="MainWindow" Height="552.113" Width="650.211"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
     <Grid>
-        <UniformGrid Columns="4">
-            <ItemsControl ItemsSource="{Binding Plates}" Margin="187,0,-200,67" HorizontalAlignment="Center" Width="142">
-                
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button IsEnabled="{Binding IsMinned}" Height="10" Width="10"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                
-            </ItemsControl>
-        </UniformGrid>
+        <ItemsControl ItemsSource="{Binding Path=Plates, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Margin="107,0,53,10" Width="357">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button  Width="auto" Height="auto" Grid.Column="{Binding Position.X}" Grid.Row="{Binding Position.Y}" Margin="0" 
+                             Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.DisclosePlate}"
+                             CommandParameter="{Binding}">
+
+                        <StackPanel>                                                    
+                             <!--<Image>
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsMinned}" Value="True">
+                                                <Setter Property="Source" Value="Resources/Bomb.png"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>-->
+
+                            <TextBlock  Visibility="{Binding IsDisclosed, Converter={StaticResource FromBooleanToVisibilityConverter}}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding NumberOfMinnedNeighbours}"/>
+                                    <Style.Triggers>
+                                        
+                                        <DataTrigger Binding="{Binding IsMinned}" Value="True">
+                                            <Setter Property="Text" Value=""/>
+                                        </DataTrigger>
+                                       
+                                    </Style.Triggers>
+                                </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+
+                        </StackPanel>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding SizeX}" Rows="{Binding SizeY}">
+                    </UniformGrid>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>       
 
     </Grid>
-</Window>
+</Controls:MetroWindow>

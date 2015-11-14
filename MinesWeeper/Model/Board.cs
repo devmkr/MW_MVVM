@@ -11,7 +11,7 @@ namespace MinesWeeper.Model
 
     public class MinnerBoard
     {
-        public List<Field> Board { get; private set; }
+        public List<Field> Board { get; set; }        
 
         public MinnerBoard(int _maxX, int _maxY, int _minesNbr)
         {
@@ -32,32 +32,27 @@ namespace MinesWeeper.Model
                 i.SetMinned();
 
             foreach (var i in Board)
-                i.NumberOfMinnedNeighbours = GetMinnedNeigboursOf(i);
-
-            PrintBoard();
+                i.NumberOfMinnedNeighbours = GetMinnedNeigboursOf(i);           
         }
 
         private int GetMinnedNeigboursOf(Field fd)
         {
             return Board.Where(i => i.IsMinned == true && fd.IsNeighbour(i) && i.Position != fd.Position).Count();
-        }
+        }      
 
-        private void PrintBoard()
+        public List<Field> GetZerosNeigbours(Field fd)
         {
-            foreach (var z in Board.GroupBy(i => i.Position.Y))
-            {
-                foreach (var x in z)
-                {
-                    Debug.Write(x.IsMinned == true ? "x" : x.NumberOfMinnedNeighbours.ToString());
-                }
-                Debug.Write("\n");
+            return Board.Where(i => i.NumberOfMinnedNeighbours == 0 && fd.IsNeighbour(i)).ToList();
+         
+        }      
 
-            }
-        }
-
+    
     }
 
-    public class Field
+  
+
+    //Decorated object
+    public class Field 
     {
         public bool IsMinned { get; private set; } = false;
         public int NumberOfMinnedNeighbours { get; set; } = 0;
@@ -68,6 +63,14 @@ namespace MinesWeeper.Model
             Position = new FieldAdd { X = _x, Y = _y };
 
         }
+
+        public Field(Field fd)
+        {
+            IsMinned = fd.IsMinned;
+            NumberOfMinnedNeighbours = fd.NumberOfMinnedNeighbours;
+            Position = fd.Position;
+        }
+
         public void SetMinned()
         {
             IsMinned = true;
@@ -96,5 +99,6 @@ namespace MinesWeeper.Model
             }
         }
     }
-  
+
+   
 }
