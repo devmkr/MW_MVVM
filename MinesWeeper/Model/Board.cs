@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static System.Math;
 
 namespace MinesWeeper.Model
@@ -19,7 +16,7 @@ namespace MinesWeeper.Model
             if (_maxX == 0 || _maxY == 0 || _minesNbr > _maxX * _maxY)
                 throw new ArgumentException();
 
-            //Initize the game board
+            //Init the game board
             Board = new List<Field>();
 
             for (int x = 0; x < _maxX; x++)
@@ -27,56 +24,43 @@ namespace MinesWeeper.Model
                     Board.Add(new Field(x, y));
 
             Random rnd = new Random();
-                      
+            //randomly to mine on the board        
             foreach (var i in Board.OrderBy(x => rnd.Next()).Take(_minesNbr))
                 i.SetMinned();
 
             foreach (var i in Board)
-                i.NumberOfMinnedNeighbours = GetMinnedNeigboursOf(i);           
+                i.AdjecentMinnedFields = GetAdjacentMinnedsOf(i);           
         }
 
-        private int GetMinnedNeigboursOf(Field fd)
+        private int GetAdjacentMinnedsOf(Field fd)
         {
-            return Board.Where(i => i.IsMinned == true && fd.IsNeighbour(i) && i.Position != fd.Position).Count();
+            return Board.Where(i => i.IsMinned == true && fd.IsAdjacent(i) && i.Position != fd.Position).Count();
         }      
-
-        public List<Field> GetZerosNeigbours(Field fd)
-        {
-            return Board.Where(i => i.NumberOfMinnedNeighbours == 0 && fd.IsNeighbour(i)).ToList();
-         
-        }      
-
-    
+   
     }
 
-  
-
-    //Decorated object
     public class Field 
     {
         public bool IsMinned { get; private set; } = false;
-        public int NumberOfMinnedNeighbours { get; set; } = 0;
+        public int AdjecentMinnedFields { get; set; } = 0;
         public FieldAdd Position { get; private set; }
 
         public Field(int _x, int _y)
         {
             Position = new FieldAdd { X = _x, Y = _y };
-
         }
 
         public Field(Field fd)
         {
             IsMinned = fd.IsMinned;
-            NumberOfMinnedNeighbours = fd.NumberOfMinnedNeighbours;
+            AdjecentMinnedFields = fd.AdjecentMinnedFields;
             Position = fd.Position;
         }
 
-        public void SetMinned()
-        {
-            IsMinned = true;
-        }
+        public void SetMinned() => IsMinned = true;
+        
 
-        internal bool IsNeighbour(Field f)
+        internal bool IsAdjacent(Field f)
         {
             return Abs(Position.X - f.Position.X) <= 1 && Abs(Position.Y - f.Position.Y) <= 1;
         }
@@ -95,7 +79,6 @@ namespace MinesWeeper.Model
             public static bool operator !=(FieldAdd f1, FieldAdd f2)
             {
                 return (f1.X != f2.Y || f1.Y != f2.Y) ? true : false;
-
             }
         }
     }

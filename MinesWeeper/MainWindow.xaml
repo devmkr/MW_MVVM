@@ -5,57 +5,89 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MinesWeeper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="552.113" Width="650.211"
+        Title="MainWindow" Height="550" Width="650" ResizeMode="NoResize"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
-    <Grid>
-        <ItemsControl ItemsSource="{Binding Path=Plates, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Margin="107,0,53,10" Width="357">
+    <DockPanel>
+    <Grid DockPanel.Dock="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">           
+        <ItemsControl ItemsSource="{Binding Plates, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Margin="0,0,0,0" Width="auto">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button  Width="auto" Height="auto" Grid.Column="{Binding Position.X}" Grid.Row="{Binding Position.Y}" Margin="0" 
-                             Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.DisclosePlate}"
-                             CommandParameter="{Binding}">
+                    <Button  Width="20" Height="20" Grid.Column="{Binding Position.X}" Grid.Row="{Binding Position.Y}" Margin="0"
+                		Command="{Binding DataContext.DisclosePlate, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                		CommandParameter="{Binding}">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                                <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsDisclosed}" Value="True"/>
+                                                <Condition Binding="{Binding AdjecentMinnedFields}" Value="0"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <MultiDataTrigger.Setters>
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                            </MultiDataTrigger.Setters>
+                                        </MultiDataTrigger>
 
-                        <StackPanel>                                                    
-                             <!--<Image>
-                                <Image.Style>
-                                    <Style TargetType="{x:Type Image}">
+                                        <DataTrigger Binding="{Binding IsDisclosed}" Value="True">
+                                           <Setter Property="IsCancel" Value="True"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                            </Style>
+                            
+                        </Button.Style>
+                            <Button.InputBindings>
+                                <MouseBinding Command="{Binding DataContext.MarkFieldCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                                              Gesture="RightClick" CommandParameter="{Binding}"/>
+                            </Button.InputBindings>
+                            <StackPanel>
+                                <Grid>
+                                <ContentControl Template="{StaticResource FlagImage}" Visibility="{Binding IsMarked, Converter={StaticResource FromBooleanToVisibilityConverter}}"/>
+                                <TextBlock  Visibility="{Binding IsDisclosed, Converter={StaticResource FromBooleanToVisibilityConverter}}">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Text" Value="{Binding AdjecentMinnedFields}"/>
+                                        <Setter Property="FontSize" Value="12"/>                                        
+                                        <Setter Property="Foreground" Value="{Binding AdjecentMinnedFields, Converter={StaticResource FromIntegerToBrushConverter}}"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsMinned}" Value="True">
-                                                <Setter Property="Source" Value="Resources/Bomb.png"/>
+                                                <Setter Property="Text" Value="B"/>
+                                                <Setter Property="Foreground" Value="Red"/>
                                             </DataTrigger>
+                                                
                                         </Style.Triggers>
                                     </Style>
-                                </Image.Style>
-                            </Image>-->
-
-                            <TextBlock  Visibility="{Binding IsDisclosed, Converter={StaticResource FromBooleanToVisibilityConverter}}">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="{Binding NumberOfMinnedNeighbours}"/>
-                                    <Style.Triggers>
-                                        
-                                        <DataTrigger Binding="{Binding IsMinned}" Value="True">
-                                            <Setter Property="Text" Value=""/>
-                                        </DataTrigger>
-                                       
-                                    </Style.Triggers>
-                                </Style>
                                 </TextBlock.Style>
                             </TextBlock>
+                                </Grid>
 
-
-                        </StackPanel>
+                            </StackPanel>
                     </Button>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="{Binding SizeX}" Rows="{Binding SizeY}">
-                    </UniformGrid>
+                    <UniformGrid  Width="auto" Height="auto" Margin="2"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-        </ItemsControl>       
-
+        </ItemsControl>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Margin="10">
+            <TextBlock>Size:</TextBlock>
+            <Slider Minimum="5" Maximum="20" Value="{Binding Size}" Interval="1" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Value}"/>            
+            <TextBlock>Percentage of mines</TextBlock>
+            <Slider Minimum="10" Maximum="90" Value="{Binding MinesPercentage}" Interval="5" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Value}"/>
+            <Button Content="NEW GAME" Command="{Binding StartCommand}"/>
+                </StackPanel>         
+                     
     </Grid>
+        <StatusBar DockPanel.Dock ="Bottom" Height="20" VerticalAlignment="Bottom" Background="{Binding GameState, Converter={StaticResource FromStateToBrushConverter}}">
+            <TextBlock Text="{Binding GameStateMsg}"/>
+        </StatusBar>
+    </DockPanel>
 </Controls:MetroWindow>

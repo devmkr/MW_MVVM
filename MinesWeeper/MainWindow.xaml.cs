@@ -1,4 +1,6 @@
 ﻿using MahApps.Metro.Controls;
+using GalaSoft.MvvmLight.Messaging;
+using MinesWeeper.ViewModel;
 using MinesWeeper.Model;
 using System;
 using System.Collections.Generic;
@@ -25,7 +27,7 @@ namespace MinesWeeper
         public MainWindow()
         {
             InitializeComponent();
-            
+       
         }
     }
 }
