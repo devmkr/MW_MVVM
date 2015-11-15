@@ -217,8 +217,7 @@ namespace MinesWeeper.ViewModel
         
         public async void InitNewGame()
         {
-           //Task for init board of Game. 
-           var zz = (int)(((float)MinesPercentage / 100.0) * Size * Size);
+           //Task for init board of Game.         
            var t1 =  Task<MinnerBoard>.Factory.StartNew(() => {return new MinnerBoard(Size, Size, (int)(((float)MinesPercentage / 100.0) * Size * Size)); });
            _model = await t1;
             
@@ -227,7 +226,7 @@ namespace MinesWeeper.ViewModel
           
            RaisePropertyChanged(nameof(Plates));
 
-            GameState = States.Playing;
+           GameState = States.Playing;
         }
       
 
