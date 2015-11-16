@@ -13,21 +13,21 @@ namespace MinesWeeper
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public class FromBooleanToVisbilityConverter : IValueConverter
+    public class FromStateToBooleanConverter : IValueConverter
     {
         /// <summary>
         /// Initializes a new instance of the FromBooleanToVisbilityConverter class.
         /// </summary>
-        public FromBooleanToVisbilityConverter()
+        public FromStateToBooleanConverter()
         {
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is bool))
+            if (!(value is States))
                  throw new ArgumentException();
 
-            return (bool)value == true ? Visibility.Visible : Visibility.Hidden;
+            return (States)value != States.Playing ? false : true;
 
 
         }

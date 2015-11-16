@@ -18,7 +18,7 @@ namespace MinesWeeper.Model
 
             //Init the game board
             Board = new List<Field>();
-
+            //Generate the board
             for (int x = 0; x < _maxX; x++)
                 for (int y = 0; y < _maxY; y++)
                     Board.Add(new Field(x, y));
@@ -27,7 +27,7 @@ namespace MinesWeeper.Model
             //randomly to mine on the board        
             foreach (var i in Board.OrderBy(x => rnd.Next()).Take(_minesNbr))
                 i.SetMinned();
-
+            //Set number adjacent minned fields
             foreach (var i in Board)
                 i.AdjecentMinnedFields = GetAdjacentMinnedsOf(i);           
         }

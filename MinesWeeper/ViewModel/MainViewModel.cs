@@ -96,6 +96,7 @@ namespace MinesWeeper.ViewModel
                             //TO DO stop game
                             GameState = States.Lost;
                             DiscloseAllPlates();
+                            return;
                         }                        
                         else if(p.AdjecentMinnedFields == 0)
                         {                            
@@ -106,14 +107,10 @@ namespace MinesWeeper.ViewModel
                                 z.Disclose(); 
                                                            
                         }
-
-                        if (Plates.Where(x => x.IsMarked == true || x.IsDisclosed == true).Count() - Plates.Where(x => x.IsMinned).Count() == 0)
-                            GameState = States.Won;
-                        
-                        
-                        //TO DO check win the game  
+                       
                         p.UnMark();                                        
-                        p.Disclose();                           
+                        p.Disclose();
+                        CheckWin();                      
 
                     }));
             }
@@ -184,12 +181,12 @@ namespace MinesWeeper.ViewModel
                     ?? (_markFieldCommand = new RelayCommand<ModelViewField>(
                     p =>
                     {
-                        Debug.WriteLine("estes");
                         if (!p.IsDisclosed)
                         {
                             p.MarkField();
                             Debug.Write(p.IsMarked);
                         }
+                        CheckWin();
                     }));
             }
         }
@@ -200,7 +197,7 @@ namespace MinesWeeper.ViewModel
             var zz = z;
             foreach (var i in z)
                 //Find all zero adjacent fields                   
-                zz = zz.Union(Plates.Where(j => j.IsAdjacent(i) && j.AdjecentMinnedFields == 0).ToList()).ToList();
+                zz = zz.Union(Plates.Where(j => j.IsAdjacent(i) && j.AdjecentMinnedFields == 0 && !j.IsMinned).ToList()).ToList();
 
             //recursion 
             return zz.Except(z).Count() == 0 ? z : FindBlankArea(ref zz);
@@ -238,6 +235,12 @@ namespace MinesWeeper.ViewModel
                 s.IsMarked = false;
             }
                 
+        }
+
+        private void CheckWin()
+        {
+           if (Plates.Where(x => x.IsMarked == true || x.IsDisclosed == true).Count()  == Plates.Count())
+                GameState = States.Won;
         }
 
         //Inherited class for field; addition of parameters to display 

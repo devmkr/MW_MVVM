@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MinesWeeper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="650" ResizeMode="NoResize"
+        Title="MinesWeeper - MVVM" Height="550" Width="650" ResizeMode="NoResize"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     <DockPanel>
@@ -20,7 +20,7 @@
                 <DataTemplate>
                     <Button  Width="20" Height="20" Grid.Column="{Binding Position.X}" Grid.Row="{Binding Position.Y}" Margin="0"
                 		Command="{Binding DataContext.DisclosePlate, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-                		CommandParameter="{Binding}">
+                		CommandParameter="{Binding}" ToolTip="{Binding AdjecentMinnedFields}">
                         <Button.Style>
                             <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
                                 <Style.Triggers>
@@ -48,7 +48,7 @@
                             <StackPanel>
                                 <Grid>
                                 <ContentControl Template="{StaticResource FlagImage}" Visibility="{Binding IsMarked, Converter={StaticResource FromBooleanToVisibilityConverter}}"/>
-                                <TextBlock  Visibility="{Binding IsDisclosed, Converter={StaticResource FromBooleanToVisibilityConverter}}">
+                                <TextBlock  Visibility="{Binding IsDisclosed, Converter={StaticResource FromBooleanToVisibilityConverter}}" VerticalAlignment="Center">
                                 <TextBlock.Style>
                                     <Style TargetType="{x:Type TextBlock}">
                                         <Setter Property="Text" Value="{Binding AdjecentMinnedFields}"/>
@@ -72,7 +72,7 @@
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid  Width="auto" Height="auto" Margin="2"/>
+                            <UniformGrid  Width="auto" Height="auto" Margin="2" IsEnabled="{Binding GameState, Converter={StaticResource FromStateToBooleanConverter}}" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>

@@ -1,3 +1,7 @@
+C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\App.g.cs
+C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\MinesWeeper_MarkupCompile.cache
+C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\MinesWeeper_MarkupCompile.lref
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\bin\Debug\MinesWeeper.exe.config
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\bin\Debug\MinesWeeper.exe
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\bin\Debug\MinesWeeper.pdb
@@ -16,12 +20,7 @@ C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\bin\D
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\bin\Debug\MahApps.Metro.xml
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\bin\Debug\Microsoft.Practices.ServiceLocation.pdb
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\bin\Debug\Microsoft.Practices.ServiceLocation.xml
-C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\Resources\weapon29.baml
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\MainWindow.g.cs
-C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\App.g.cs
-C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\GeneratedInternalTypeHelper.g.cs
-C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\MinesWeeper_MarkupCompile.cache
-C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\MinesWeeper_MarkupCompile.lref
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\App.baml
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\MainWindow.baml
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\MinesWeeper.g.resources
@@ -29,5 +28,3 @@ C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\D
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\MinesWeeper.csproj.GenerateResource.Cache
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\MinesWeeper.exe
 C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\MinesWeeper.pdb
-C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\Resources\location76.baml
-C:\Users\mkr\Documents\Visual Studio 2015\Projects\MinesWeeper\MinesWeeper\obj\Debug\MinesWeeper.csprojResolveAssemblyReference.cache

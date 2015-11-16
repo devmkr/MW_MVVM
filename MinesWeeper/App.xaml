@@ -22,6 +22,7 @@
             <local:FromBooleanToVisbilityConverter x:Key="FromBooleanToVisibilityConverter"/>
             <local:FromIntegerToBrushConverter x:Key="FromIntegerToBrushConverter"/>
             <local:FromStateToBrushConverter x:Key="FromStateToBrushConverter"/>
+            <local:FromStateToBooleanConverter x:Key="FromStateToBooleanConverter"/>
         </ResourceDictionary>
   </Application.Resources>
 </Application>
