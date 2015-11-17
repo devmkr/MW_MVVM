@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Diagnostics;
+using System.Timers;
 
 namespace MinesWeeper.ViewModel
 {
@@ -28,10 +29,11 @@ namespace MinesWeeper.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        MinnerBoard _model;       
+        private MinnerBoard _model;
+        private TimerModel _timermodel;    
 
-        ObservableCollection<ModelViewField> _plates;        
-      
+        private ObservableCollection<ModelViewField> _plates;    
+                
         public ObservableCollection<ModelViewField> Plates
         {
             get { return _plates; }
@@ -58,6 +60,10 @@ namespace MinesWeeper.ViewModel
                 Set(nameof(Size), ref _size, value);
             }
         }
+
+        /// <summary>
+        /// The <see cref="GameTimer" /> property's name.
+        /// </summary>
         
         /// <summary>
         /// The <see cref="MinesPercentage" /> property's name.
@@ -80,7 +86,20 @@ namespace MinesWeeper.ViewModel
                 Set(nameof(MinesPercentage), ref _minesPercentage, value);
             }
         }
-       
+
+        /// <summary>
+        /// Sets and gets the GameTimer property.
+        /// Changes to that property's value raise the PropertyChanged event. 
+        /// </summary>
+        public string GameTimer
+        {
+            get
+            {
+                return _timermodel.CurrentTime;
+            }
+           
+        }
+
         private RelayCommand<ModelViewField> _disclosePlate;
 
         public RelayCommand<ModelViewField> DisclosePlate
@@ -91,26 +110,16 @@ namespace MinesWeeper.ViewModel
                     ?? (_disclosePlate = new RelayCommand<ModelViewField>(
                     p =>
                     {
-                        if (p.IsMinned)
-                        {
-                            //TO DO stop game
-                            GameState = States.Lost;
-                            DiscloseAllPlates();
-                            return;
-                        }                        
-                        else if(p.AdjecentMinnedFields == 0)
+                        ControlGameState(p);
+
+                        if (p.AdjecentMinnedFields == 0)
                         {                            
                             var tmp = new List<ModelViewField>() { p };
 
                             //Finding zeros area(blank area) and disclose all these fields
                             foreach (var z in FindBlankArea(ref tmp))
-                                z.Disclose(); 
-                                                           
-                        }
-                       
-                        p.UnMark();                                        
-                        p.Disclose();
-                        CheckWin();                      
+                                z.Disclose();                                                            
+                        }                                                                                       
 
                     }));
             }
@@ -124,8 +133,8 @@ namespace MinesWeeper.ViewModel
             get
             {
                 return GameState == States.Lost ? "Lost" :
-                        GameState == States.Won ? "win" :
-                        string.Empty;
+                       GameState == States.Won ? "win" :
+                       string.Empty;
                     }
         }
 
@@ -144,7 +153,7 @@ namespace MinesWeeper.ViewModel
             set
             {
 
-                Set(nameof(GameState), ref _gameState, value);
+                Set(nameof(ControlGameState), ref _gameState, value);
                 RaisePropertyChanged(nameof(GameStateMsg));
             }
         }
@@ -181,12 +190,10 @@ namespace MinesWeeper.ViewModel
                     ?? (_markFieldCommand = new RelayCommand<ModelViewField>(
                     p =>
                     {
-                        if (!p.IsDisclosed)
-                        {
+                        if (!p.IsDisclosed)                        
                             p.MarkField();
-                            Debug.Write(p.IsMarked);
-                        }
-                        CheckWin();
+
+                         ControlGameState(p);
                     }));
             }
         }
@@ -208,10 +215,14 @@ namespace MinesWeeper.ViewModel
             //Default values  
             Size = 20;
             MinesPercentage = 40;
-            InitNewGame();            
-                        
-        }  
-        
+
+            //Init GameTimer
+            _timermodel = new TimerModel(5);
+         
+            
+        }
+       
+
         public async void InitNewGame()
         {
            //Task for init board of Game.         
@@ -222,12 +233,16 @@ namespace MinesWeeper.ViewModel
            _plates = await t2;
           
            RaisePropertyChanged(nameof(Plates));
-
            GameState = States.Playing;
-        }
-      
 
-        private void DiscloseAllPlates()
+            _timermodel = new TimerModel(5);
+            _timermodel.StartTimer();
+            _timermodel.PropertyChanged += (s, e) => { RaisePropertyChanged(nameof(GameTimer)); }; //To provide binding of timer
+            _timermodel.TimeElapsed += (s, e) => { StopGame(States.Lost); }; //Time elapsed = game over
+
+        }
+
+        private void DiscloseEntireBoard()
         {
             foreach (var s in _plates)
             {
@@ -237,10 +252,36 @@ namespace MinesWeeper.ViewModel
                 
         }
 
-        private void CheckWin()
+        private void ControlGameState(ModelViewField p)
         {
-           if (Plates.Where(x => x.IsMarked == true || x.IsDisclosed == true).Count()  == Plates.Count())
-                GameState = States.Won;
+            if (p.IsMinned)
+            {
+                //TO DO stop game
+                StopGame(States.Lost);
+                return;
+            }
+
+            p.UnMark();
+            p.Disclose();
+
+            if (Plates.Where(x => x.IsMarked == true || x.IsDisclosed == true).Count()  == Plates.Count())
+            {
+                StopGame(States.Won);             
+            }
+
+               
+        }
+
+        private void StopGame(States gm)
+        {
+            GameState = gm;
+            DiscloseEntireBoard();
+            _timermodel.StopTimer();
+        }
+
+        private void OnTimeElapsed(object sender, ElapsedEventArgs args)
+        {
+
         }
 
         //Inherited class for field; addition of parameters to display 
