@@ -142,8 +142,7 @@ namespace MinesWeeper.ViewModel
        
         public MainViewModel()
         {
-            var z = new BestScores();
-            z.UpdateScores();
+           
         }             
   
 

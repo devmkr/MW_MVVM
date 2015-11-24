@@ -35,7 +35,7 @@ namespace MinesWeeper.Model
 
         private MinnerBoard()
         {
-
+            //Factory Pattern
         }
 
         private void MineBoard(int minesNbr)
