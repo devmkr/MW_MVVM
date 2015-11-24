@@ -1,17 +1,13 @@
 using GalaSoft.MvvmLight;
-using MinesWeeper.Model;
-using System.Collections.Generic;
-using System;
-using System.Linq;
-using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using System.Collections.Specialized;
+using MinesWeeper.Model;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Threading.Tasks;
+using System.Globalization;
+using System.Linq;
 using System.Threading;
-using System.Diagnostics;
-using System.Timers;
 
 namespace MinesWeeper.ViewModel
 {
@@ -32,23 +28,13 @@ namespace MinesWeeper.ViewModel
         private MinnerBoard _model;
         private TimerModel _timermodel;    
 
-        private ObservableCollection<ModelViewField> _plates;    
-                
+        private ObservableCollection<ModelViewField> _plates;                   
         public ObservableCollection<ModelViewField> Plates
         {
             get { return _plates; }
         }
-
-        /// <summary>
-        /// The <see cref="Size" /> property's name.
-        /// </summary>
-    
-        private int _size;
-
-        /// <summary>
-        /// Sets and gets the SizeX property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
+        
+        private int _size = 20;
         public int Size
         {
             get
@@ -59,22 +45,9 @@ namespace MinesWeeper.ViewModel
             {
                 Set(nameof(Size), ref _size, value);
             }
-        }
-
-        /// <summary>
-        /// The <see cref="GameTimer" /> property's name.
-        /// </summary>
+        } 
         
-        /// <summary>
-        /// The <see cref="MinesPercentage" /> property's name.
-        /// </summary>      
-
         private int _minesPercentage = 40;
-
-        /// <summary>
-        /// Sets and gets the MinesProcentage property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
         public int MinesPercentage
         {
             get
@@ -86,22 +59,17 @@ namespace MinesWeeper.ViewModel
                 Set(nameof(MinesPercentage), ref _minesPercentage, value);
             }
         }
-
-        /// <summary>
-        /// Sets and gets the GameTimer property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
+       
         public string GameTimer
         {
             get
             {
-                return _timermodel.CurrentTime;
+                return _timermodel != null ? _timermodel.CurrentTime : string.Empty;
             }
            
         }
 
         private RelayCommand<ModelViewField> _disclosePlate;
-
         public RelayCommand<ModelViewField> DisclosePlate
         {
             get
@@ -125,25 +93,17 @@ namespace MinesWeeper.ViewModel
             }
         }
 
-        /// <summary>
-        /// The <see cref="GameState" /> property's name.
-        /// </summary>
         public string GameStateMsg
         {
             get
             {
                 return GameState == States.Lost ? "Lost" :
-                       GameState == States.Won ? "win" :
+                       GameState == States.Won ? "Win" :
                        string.Empty;
                     }
         }
 
-        private States _gameState;
-
-        /// <summary>
-        /// Sets and gets the GameState property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
+        private States _gameState;       
         public States GameState
         {
             get
@@ -153,17 +113,14 @@ namespace MinesWeeper.ViewModel
             set
             {
 
-                Set(nameof(ControlGameState), ref _gameState, value);
+                Set(nameof(GameState), ref _gameState, value);
                 RaisePropertyChanged(nameof(GameStateMsg));
             }
         }
-      
+
+        public int GameTimeInSecond { get; set; }
 
         private RelayCommand _startCommand;
-
-        /// <summary>
-        /// Gets the StartCommand.
-        /// </summary>
         public RelayCommand StartCommand
         {
             get
@@ -178,10 +135,6 @@ namespace MinesWeeper.ViewModel
         }
 
         private RelayCommand<ModelViewField> _markFieldCommand;
-
-        /// <summary>
-        /// Gets the MyCommand.
-        /// </summary>
         public RelayCommand<ModelViewField> MarkFieldCommand
         {
             get
@@ -192,54 +145,39 @@ namespace MinesWeeper.ViewModel
                     {
                         if (!p.IsDisclosed)                        
                             p.MarkField();
-
                          ControlGameState(p);
                     }));
             }
         }
-
-        private List<ModelViewField> FindBlankArea(ref List<ModelViewField> z)
-        {
-            //temporary copying the list
-            var zz = z;
-            foreach (var i in z)
-                //Find all zero adjacent fields                   
-                zz = zz.Union(Plates.Where(j => j.IsAdjacent(i) && j.AdjecentMinnedFields == 0 && !j.IsMinned).ToList()).ToList();
-
-            //recursion 
-            return zz.Except(z).Count() == 0 ? z : FindBlankArea(ref zz);
-        }
        
         public MainViewModel()
-        {          
-            //Default values  
-            Size = 20;
-            MinesPercentage = 40;
-
-            //Init GameTimer
-            _timermodel = new TimerModel(5);
-         
-            
-        }
-       
-
-        public async void InitNewGame()
         {
-           //Task for init board of Game.         
-           var t1 =  Task<MinnerBoard>.Factory.StartNew(() => {return new MinnerBoard(Size, Size, (int)(((float)MinesPercentage / 100.0) * Size * Size)); });
-           _model = await t1;
-            
-           var t2 = Task<ObservableCollection<ModelViewField>>.Factory.StartNew((() => { return new ObservableCollection<ModelViewField>(_model.Board.Select(x => new ModelViewField(x) { IsDisclosed = false, IsMarked = false })); }));
-           _plates = await t2;
-          
+                  
+        }      
+
+        public void InitNewGame()
+        {        
+           _model = new MinnerBoard(Size, Size, (int)(((float)MinesPercentage / 100.0) * Size * Size));                      
+           _plates = new ObservableCollection<ModelViewField>(_model.Board.Select(x => new ModelViewField(x) { IsDisclosed = false, IsMarked = false }));
+
            RaisePropertyChanged(nameof(Plates));
-           GameState = States.Playing;
+           StartGame();
+          
+        }
 
-            _timermodel = new TimerModel(5);
-            _timermodel.StartTimer();
+        public void InitTimer()
+        {
+            int _limitTimeInSeconds = (int)Math.Sqrt(Size * 1.5)*20;
+
+            //First init
+            _timermodel = _timermodel ?? new TimerModel(_limitTimeInSeconds);
+                   
+            _timermodel.SetCountdownTime(_limitTimeInSeconds);
+            _timermodel.Start();
+
+            //Register subsribers
             _timermodel.PropertyChanged += (s, e) => { RaisePropertyChanged(nameof(GameTimer)); }; //To provide binding of timer
-            _timermodel.TimeElapsed += (s, e) => { StopGame(States.Lost); }; //Time elapsed = game over
-
+            _timermodel.TimeElapsed += (s, e) => { StopGame(States.Lost); }; //Time elapsed = game over           
         }
 
         private void DiscloseEntireBoard()
@@ -256,7 +194,6 @@ namespace MinesWeeper.ViewModel
         {
             if (p.IsMinned)
             {
-                //TO DO stop game
                 StopGame(States.Lost);
                 return;
             }
@@ -265,25 +202,34 @@ namespace MinesWeeper.ViewModel
             p.Disclose();
 
             if (Plates.Where(x => x.IsMarked == true || x.IsDisclosed == true).Count()  == Plates.Count())
-            {
-                StopGame(States.Won);             
-            }
-
-               
+               StopGame(States.Won);            
+                           
+        }
+        private void StartGame()
+        {
+            GameState = States.Playing;
+            InitTimer();
         }
 
         private void StopGame(States gm)
         {
             GameState = gm;
             DiscloseEntireBoard();
-            _timermodel.StopTimer();
+            _timermodel.Stop();
         }
 
-        private void OnTimeElapsed(object sender, ElapsedEventArgs args)
+        private List<ModelViewField> FindBlankArea(ref List<ModelViewField> z)
         {
+            //temporary copying the list
+            var zz = z;
+            foreach (var i in z)
+                //Find all zero adjacent fields                   
+                zz = zz.Union(Plates.Where(j => j.IsAdjacent(i) && j.AdjecentMinnedFields == 0 && !j.IsMinned).ToList()).ToList();
 
+            //recursion 
+            return zz.Except(z).Count() == 0 ? z : FindBlankArea(ref zz);
         }
-
+   
         //Inherited class for field; addition of parameters to display 
         public class ModelViewField : Field, INotifyPropertyChanged
         {
@@ -310,16 +256,9 @@ namespace MinesWeeper.ViewModel
             public void UnMark() => IsMarked = false;
 
             public event PropertyChangedEventHandler PropertyChanged;
-            private void NotifyPropertyChanged(string info)
-            {
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs(info));
-                }
-            }
+            private void NotifyPropertyChanged(string info) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
     }
-
    
     public enum States
     {

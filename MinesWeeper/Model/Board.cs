@@ -23,18 +23,27 @@ namespace MinesWeeper.Model
                 for (int y = 0; y < _maxY; y++)
                     Board.Add(new Field(x, y));
 
+            MineBoard(_minesNbr);
+            SetNumberOfAdjacentMinnedField();            
+
+        }
+        private void MineBoard(int minesNbr)
+        {
             Random rnd = new Random();
-            //randomly to mine on the board        
-            foreach (var i in Board.OrderBy(x => rnd.Next()).Take(_minesNbr))
+            //randomly to mine on the board   
+            foreach (var i in Board.OrderBy(x => rnd.Next()).Take(minesNbr))
                 i.SetMinned();
-            //Set number adjacent minned fields
+        }
+
+        private void SetNumberOfAdjacentMinnedField()
+        {
             foreach (var i in Board)
-                i.AdjecentMinnedFields = GetAdjacentMinnedsOf(i);           
+                i.AdjecentMinnedFields = GetAdjacentMinnedsOf(i);
         }
 
         private int GetAdjacentMinnedsOf(Field fd)
         {
-            return Board.Where(i => i.IsMinned == true && fd.IsAdjacent(i) && i.Position != fd.Position).Count();
+            return Board.Where(i => i.IsMinned && fd.IsAdjacent(i)).Count();
         }      
    
     }
@@ -65,7 +74,7 @@ namespace MinesWeeper.Model
             return Abs(Position.X - f.Position.X) <= 1 && Abs(Position.Y - f.Position.Y) <= 1;
         }
 
-
+        #pragma warning disable 
         public struct FieldAdd
         {
             public int X { get; set; }
@@ -80,6 +89,8 @@ namespace MinesWeeper.Model
             {
                 return (f1.X != f2.Y || f1.Y != f2.Y) ? true : false;
             }
+
+
         }
     }
 

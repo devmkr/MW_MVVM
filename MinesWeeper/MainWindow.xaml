@@ -19,8 +19,8 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button  Width="20" Height="20" Grid.Column="{Binding Position.X}" Grid.Row="{Binding Position.Y}" Margin="0"
-                		Command="{Binding DataContext.DisclosePlate, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-                		CommandParameter="{Binding}" ToolTip="{Binding AdjecentMinnedFields}">
+                		             Command="{Binding DataContext.DisclosePlate, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                		             CommandParameter="{Binding}" ToolTip="{Binding AdjecentMinnedFields}">
                                 <Button.Style>
                                     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
                                         <Style.Triggers>
