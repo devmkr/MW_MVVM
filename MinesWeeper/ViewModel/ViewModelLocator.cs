@@ -43,6 +43,7 @@ namespace MinesWeeper.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<BestScoresViewModel>();
         }
 
         public MainViewModel Main
@@ -50,6 +51,14 @@ namespace MinesWeeper.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
+            }
+        }
+
+        public BestScoresViewModel BestScores
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<BestScoresViewModel>();
             }
         }
         

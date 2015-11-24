@@ -82,7 +82,7 @@
                 <TextBlock>Percentage of mines</TextBlock>
                 <Slider Minimum="10" Maximum="90" Value="{Binding MinesPercentage}" Interval="5"/>
                 <Button Content="NEW GAME" Command="{Binding StartCommand}"/>
-
+              
             </StackPanel>
 
         </Grid>

@@ -18,26 +18,14 @@ namespace MinesWeeper.Model
 
             using (StringWriter sw = new StringWriter())
             using (XmlWriter xw = XmlWriter.Create(sw, new XmlWriterSettings() { OmitXmlDeclaration = true }))
-            {       xs.Serialize(xw, serizalizingObject);
+            {
+                    xs.Serialize(xw, serizalizingObject);
                     xml = sw.ToString();              
             }
 
             return xml.ToString();
 
-        }
-
-        public static string AsString(this XmlDocument xml)
-        {
-            using (StringWriter sw = new StringWriter())
-            using (XmlWriter xw = XmlWriter.Create(sw))
-            {
-                xml.WriteTo(xw);
-                xw.Flush();
-
-                return sw.GetStringBuilder().ToString();
-               
-            }
-        }
+        }       
                
 
     }

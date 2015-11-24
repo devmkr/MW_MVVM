@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using static System.Math;
 
 namespace MinesWeeper.Model
@@ -8,25 +9,35 @@ namespace MinesWeeper.Model
 
     public class MinnerBoard
     {
-        public List<Field> Board { get; set; }        
+        public List<Field> Board { get; set; }
+  
 
-        public MinnerBoard(int _maxX, int _maxY, int _minesNbr)
+        public static MinnerBoard Create(int _maxX, int _maxY, int _minesNbr)
         {
-
             if (_maxX == 0 || _maxY == 0 || _minesNbr > _maxX * _maxY)
                 throw new ArgumentException();
 
+            var rr = new MinnerBoard();
             //Init the game board
-            Board = new List<Field>();
+            rr.Board = new List<Field>();
             //Generate the board
             for (int x = 0; x < _maxX; x++)
                 for (int y = 0; y < _maxY; y++)
-                    Board.Add(new Field(x, y));
+                    rr.Board.Add(new Field(x, y));
 
-            MineBoard(_minesNbr);
-            SetNumberOfAdjacentMinnedField();            
+           
+            rr.MineBoard(_minesNbr);
+            rr.SetNumberOfAdjacentMinnedField();   
+
+            return rr;
+        }
+
+
+        private MinnerBoard()
+        {
 
         }
+
         private void MineBoard(int minesNbr)
         {
             Random rnd = new Random();

@@ -8,21 +8,11 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MinesWeeper.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// You can also use Blend to data bind with the tool's support.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
+ 
     public class MainViewModel : ViewModelBase
     {
         private MinnerBoard _model;
@@ -152,15 +142,18 @@ namespace MinesWeeper.ViewModel
        
         public MainViewModel()
         {
-                  
-        }      
+            var z = new BestScores();
+            z.UpdateScores();
+        }             
+  
 
         public void InitNewGame()
-        {        
-           _model = new MinnerBoard(Size, Size, (int)(((float)MinesPercentage / 100.0) * Size * Size));                      
-           _plates = new ObservableCollection<ModelViewField>(_model.Board.Select(x => new ModelViewField(x) { IsDisclosed = false, IsMarked = false }));
+        {
 
-           RaisePropertyChanged(nameof(Plates));
+            _model = MinnerBoard.Create(Size, Size, (int)(((float)MinesPercentage / 100.0) * Size * Size));
+            _plates = new ObservableCollection<ModelViewField>(_model.Board.Select(x => new ModelViewField(x) { IsDisclosed = false, IsMarked = false }));
+
+            RaisePropertyChanged(nameof(Plates));
            StartGame();
           
         }
@@ -223,8 +216,8 @@ namespace MinesWeeper.ViewModel
             //temporary copying the list
             var zz = z;
             foreach (var i in z)
-                //Find all zero adjacent fields                   
-                zz = zz.Union(Plates.Where(j => j.IsAdjacent(i) && j.AdjecentMinnedFields == 0 && !j.IsMinned).ToList()).ToList();
+                //Find all zeros adjacent fields                   
+                zz = zz.Union(Plates.Where(j => j.IsAdjacent(i) && j.AdjecentMinnedFields == 0 && !j.IsMinned)).ToList();
 
             //recursion 
             return zz.Except(z).Count() == 0 ? z : FindBlankArea(ref zz);
