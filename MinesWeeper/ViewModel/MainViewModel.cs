@@ -1,10 +1,12 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Threading;
 using MinesWeeper.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -22,6 +24,7 @@ namespace MinesWeeper.ViewModel
         public ObservableCollection<ModelViewField> Plates
         {
             get { return _plates; }
+            set { Set(nameof(Plates), ref _plates, value); }
         }
         
         private int _size = 20;
@@ -117,9 +120,10 @@ namespace MinesWeeper.ViewModel
             {
                 return _startCommand
                     ?? (_startCommand = new RelayCommand(
-                    () =>
-                    {
-                        InitNewGame();
+                    async () =>
+                    {                      
+                        await Task.Run(()=> InitNewGame());          
+
                     }));
             }
         }
@@ -142,20 +146,21 @@ namespace MinesWeeper.ViewModel
        
         public MainViewModel()
         {
-           
-        }             
-  
 
+        }           
+  
         public void InitNewGame()
         {
-
+            Thread.Sleep(3000);     
             _model = MinnerBoard.Create(Size, Size, (int)(((float)MinesPercentage / 100.0) * Size * Size));
-            _plates = new ObservableCollection<ModelViewField>(_model.Board.Select(x => new ModelViewField(x) { IsDisclosed = false, IsMarked = false }));
-
-            RaisePropertyChanged(nameof(Plates));
-           StartGame();
-          
+            _plates = new ObservableCollection<ModelViewField>(_model.Board.Select(x => new ModelViewField(x)));
+            
+            DispatcherHelper.CheckBeginInvokeOnUI(              
+               () =>   RaisePropertyChanged(nameof(Plates)));                         
+            StartGame();
+           
         }
+    
 
         public void InitTimer()
         {
@@ -176,10 +181,9 @@ namespace MinesWeeper.ViewModel
         {
             foreach (var s in _plates)
             {
-                s.IsDisclosed = true;
-                s.IsMarked = false;
-            }
-                
+                s.Disclose();
+                s.UnMark();               
+            }                
         }
 
         private void ControlGameState(ModelViewField p)
@@ -222,25 +226,25 @@ namespace MinesWeeper.ViewModel
             return zz.Except(z).Count() == 0 ? z : FindBlankArea(ref zz);
         }
    
-        //Inherited class for field; addition of parameters to display 
+        //Inherited class for field; addition parameters to display 
         public class ModelViewField : Field, INotifyPropertyChanged
         {
             public ModelViewField(Field field) : base(field)
             {
-
+              
             }
 
-            private bool _isDisclosed;
-            private bool _isMarked;
+            private bool _isDisclosed = false;
+            private bool _isMarked = false;
 
             public bool IsDisclosed
             {
                 get { return _isDisclosed; }
-                set { if (value != _isDisclosed) { _isDisclosed = value; NotifyPropertyChanged(nameof(IsDisclosed)); } }
+                private set { if (value != _isDisclosed) { _isDisclosed = value; NotifyPropertyChanged(nameof(IsDisclosed)); } }
             }
             public bool IsMarked {
                 get { return _isMarked; }
-                set { if (value != _isMarked) { _isMarked = value; NotifyPropertyChanged(nameof(IsMarked)); } }
+                private set { if (value != _isMarked) { _isMarked = value; NotifyPropertyChanged(nameof(IsMarked)); } }
             }
             
             public void Disclose() => IsDisclosed = true;

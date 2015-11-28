@@ -15,9 +15,11 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <ItemsControl ItemsSource="{Binding Plates, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" Margin="0,0,0,0" Width="auto">
+                
+                <ItemsControl ItemsSource="{Binding Plates, Mode=OneWay, IsAsync=True}" HorizontalAlignment="Center" Margin="0,0,0,0" Width="auto" Name="itmCtrlBoard">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
+                            
                             <Button  Width="20" Height="20" Grid.Column="{Binding Position.X}" Grid.Row="{Binding Position.Y}" Margin="0"
                 		             Command="{Binding DataContext.DisclosePlate, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
                 		             CommandParameter="{Binding}">

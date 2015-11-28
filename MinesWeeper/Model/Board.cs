@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using static System.Math;
 
@@ -31,6 +32,16 @@ namespace MinesWeeper.Model
 
             return rr;
         }
+
+        async public static Task<MinnerBoard> CreateAsync(int _maxX, int _maxY, int _minesNbr)
+        {
+            var t = await Task.FromResult<MinnerBoard>(Create(_maxX, _maxY, _minesNbr));
+            Thread.Sleep(4000);
+           
+            return t;
+        }
+
+       
 
 
         private MinnerBoard()
